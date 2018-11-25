@@ -6,6 +6,9 @@ type AppConfig struct {
 	LoginRedirectURL  string
 	LogoutRedirectURL string
 	CookieSecretKey   string
+	NuguServiceURL    string
+	NuguID            string
+	NuguPassword      string
 }
 
 // AppProperties :

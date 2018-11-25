@@ -4,21 +4,13 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gorilla/sessions"
 	"github.com/sparcs-home-go/internal/app/configure"
 	"github.com/sparcs-home-go/internal/app/service"
 )
 
-var (
-	key   = []byte(configure.AppProperties.CookieSecretKey)
-	store = sessions.NewCookieStore(key)
-)
-
-const ssoSession = "sso_session"
-
 // SSOLogin : login thr sso
 func SSOLogin(w http.ResponseWriter, r *http.Request) {
-	session, _ := store.Get(r, ssoSession)
+	session := configure.GetSession(r)
 	if auth, ok := session.Values["authenticated"].(bool); ok && auth {
 		nextURL := session.Values["next"].(string)
 		if nextURL == "" {
@@ -35,7 +27,7 @@ func SSOLogin(w http.ResponseWriter, r *http.Request) {
 
 // SSOLoginCallback : callback from SSO
 func SSOLoginCallback(w http.ResponseWriter, r *http.Request) {
-	session, _ := store.Get(r, ssoSession)
+	session := configure.GetSession(r)
 	prevState, ok := session.Values["ssoState"].(string)
 	if !ok {
 		w.WriteHeader(http.StatusForbidden)
@@ -77,9 +69,9 @@ func SSOLoginCallback(w http.ResponseWriter, r *http.Request) {
 
 // SSOLogout : logout from SSO
 func SSOLogout(w http.ResponseWriter, r *http.Request) {
-	session, _ := store.Get(r, ssoSession)
+	session := configure.GetSession(r)
 	if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
-		log.Println("logout by unauthenticated user")
+		log.Println("Logout by unauthenticated user")
 		http.Redirect(w, r, configure.AppProperties.LogoutRedirectURL, 301)
 		return
 	}
