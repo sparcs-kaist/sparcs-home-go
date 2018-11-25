@@ -1,8 +1,11 @@
 package configure
 
-// AppConfig
+// AppConfig :
 type AppConfig struct {
-	StaticFilePath string
+	StaticFilePath    string
+	LoginRedirectURL  string
+	LogoutRedirectURL string
+	CookieSecretKey   string
 }
 
 // AppProperties :
