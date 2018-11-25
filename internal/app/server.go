@@ -25,6 +25,8 @@ func Serve(t ServerInfo) {
 	r.HandleFunc("/createAlbum", handler.CreateAlbum).Methods("POST")
 	r.HandleFunc("/deleteAlbum/{albumID}", handler.DeleteAlbum).Methods("DELETE")
 	r.HandleFunc("/deletePhoto/{photoID}", handler.DeletePhoto).Methods("DELETE")
+	r.HandleFunc("/seminar", handler.GetSeminar).Methods("GET")
+	r.HandleFunc("/seminar", handler.UploadSeminar).Methods("POST")
 	fs := http.FileServer(http.Dir(configure.AppProperties.StaticFilePath))
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
 	url := fmt.Sprintf("%s:%d", t.Host, t.Port)

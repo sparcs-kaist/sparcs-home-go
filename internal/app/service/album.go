@@ -117,14 +117,14 @@ func UploadPhoto(req UploadPhotoRequest) error {
 		log.Println("Error while scanning row")
 		return err
 	}
-	albumPath := fmt.Sprintf("%s/%d/%s", configure.AppProperties.StaticFilePath, year, title)
+	albumPath := fmt.Sprintf("%s/album/%d/%s", configure.AppProperties.StaticFilePath, year, title)
 	insertPhoto := `INSERT INTO Photo (album_id, path) VALUES (?, ?)`
 	for _, photoBase64 := range req.PhotoList {
 		photoName := strconv.FormatInt(time.Now().Unix(), 10)
 		photoPath := albumPath + string(os.PathSeparator) + photoName
 		// TODO: Transaction management
-		if err = utils.DecodeAndSaveBase64Image(photoPath, photoBase64); err != nil {
-			log.Println("Failed on DecodeAndSaveBase64Image")
+		if photoPath, err = utils.DecodeAndSaveBase64(photoPath, photoBase64, utils.ImageBase64); err != nil {
+			log.Println("Failed on DecodeAndSaveBase64")
 			return err
 		}
 		if _, err = configure.SQL.Query(insertPhoto, req.AlbumID, photoPath); err != nil {
